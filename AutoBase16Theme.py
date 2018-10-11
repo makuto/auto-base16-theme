@@ -23,6 +23,8 @@ Base16 Style (from https://github.com/chriskempson/base16/blob/master/styling.md
     base0F - Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
 """
 
+BACKGROUND_COLOR_INDEX = 0
+
 class Base16Color:
     def __init__(self, name, selectionFunction):
         self.name = name
@@ -57,25 +59,39 @@ def pickDarkestGreyestColorUnique(base16Colors, currentBase16Color, colorPool):
             bestColor = color
             bestColorAverage = rgbColorAverage
 
-    if bestColor == None:
-        print('WARNING: pickDarkestGreyestColorUnique could not select a color! Picking one at random')
-        bestColor = random.choice(colorPool)
-        
+    return bestColor
+
+# Selects the  darkest color which meets the contrast requirements and which hasn't been used yet
+def pickDarkestHighContrastColorUnique(base16Colors, currentBase16Color, colorPool):
+    minimumDarkContrast = 56
+    viableColors = []
+    for color in colorPool:
+        if getColorAverageBrightness(color) - getColorAverageBrightness(base16Colors[BACKGROUND_COLOR_INDEX].color) > minimumDarkContrast:
+            viableColors.append(color)
+
+    viableColors = sorted(viableColors,
+                          key=lambda color: getColorAverageBrightness(color), reverse=True)
+
+    # We've sorted in order of brightness; pick the darkest one which is unique
+    bestColor = None
+    for color in viableColors:
+        if not colorHasBeenUsed(base16Colors, color):
+            bestColor = color
+            break
+
     return bestColor
     
 # Pick high contrast foreground (high contrast = a minimum brightness difference between this and the brightest background)
 def pickHighContrastBrightColorRandom(base16Colors, currentBase16Color, colorPool):
-    # TODO: Make this a relative contrast to the brightest background
-    minimumContrast = 100
+    minimumBrightContrast = 92
     
     viableColors = []
     for color in colorPool:
-        if getColorAverageBrightness(color) > minimumContrast:
+        if getColorAverageBrightness(color) - getColorAverageBrightness(base16Colors[BACKGROUND_COLOR_INDEX].color) > minimumBrightContrast:
             viableColors.append(color)
 
     if not viableColors:
-        print('WARNING: pickHighContrastBrightColorRandom could not select a color! Picking one at random')
-        return randomChoice(colorPool)
+        return None
             
     return random.choice(viableColors)
     
@@ -89,21 +105,37 @@ def main():
 
     base16Colors = [
         # These go from darkest to lightest via implicit unique ordering
+        # base00 - Default Background
         Base16Color('base00', pickDarkestGreyestColorUnique),
+        # base01 - Lighter Background (Used for status bars)
         Base16Color('base01', pickDarkestGreyestColorUnique),
+        # base02 - Selection Background
         Base16Color('base02', pickDarkestGreyestColorUnique),
-        Base16Color('base03', pickDarkestGreyestColorUnique),
+        # base03 - Comments, Invisibles, Line Highlighting
+        Base16Color('base03', pickDarkestHighContrastColorUnique),#pickDarkestGreyestColorUnique),
+        # base04 - Dark Foreground (Used for status bars)
         Base16Color('base04', pickDarkestGreyestColorUnique),
+        # base05 - Default Foreground, Caret, Delimiters, Operators
         Base16Color('base05', pickDarkestGreyestColorUnique),
+        # base06 - Light Foreground (Not often used)
         Base16Color('base06', pickDarkestGreyestColorUnique),
+        # base07 - Light Background (Not often used)
         Base16Color('base07', pickDarkestGreyestColorUnique),
+        # base08 - Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
         Base16Color('base08', pickHighContrastBrightColorRandom),
+        # base09 - Integers, Boolean, Constants, XML Attributes, Markup Link Url
         Base16Color('base09', pickHighContrastBrightColorRandom),
+        # base0A - Classes, Markup Bold, Search Text Background
         Base16Color('base0A', pickHighContrastBrightColorRandom),
+        # base0B - Strings, Inherited Class, Markup Code, Diff Inserted
         Base16Color('base0B', pickHighContrastBrightColorRandom),
+        # base0C - Support, Regular Expressions, Escape Characters, Markup Quotes
         Base16Color('base0C', pickHighContrastBrightColorRandom),
+        # base0D - Functions, Methods, Attribute IDs, Headings
         Base16Color('base0D', pickHighContrastBrightColorRandom),
+        # base0E - Keywords, Storage, Selector, Markup Italic, Diff Changed
         Base16Color('base0E', pickHighContrastBrightColorRandom),
+        # base0F - Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
         Base16Color('base0F', pickHighContrastBrightColorRandom)]
 
     # For testing
@@ -127,7 +159,13 @@ def main():
 
     # Select a color from the color pool for each base16 color
     for i, base16Color in enumerate(base16Colors):
-        base16Colors[i].color = base16Color.selectionFunction(base16Colors, base16Color, colorPool)
+        color = base16Color.selectionFunction(base16Colors, base16Color, colorPool)
+
+        if not color:
+            print('WARNING: {} could not select a color! Picking one at random'.format(base16Color.name))
+            color = random.choice(colorPool)
+
+        base16Colors[i].color = color
         
         print('Selected {} for {}'.format(base16Colors[i].color, base16Color.name))
 

@@ -12,3 +12,6 @@ This script requires Python 3.
 Run the following command, replacing "your image" with the image you want the theme's colors to be pulled from:
 : schemer2 -format img::colors -in [your image] -out colors.txt && python3 AutoBase16Theme.py
 Automating the execution of this so that it updates with your desktop background is left as an exercise for the reader :).
+
+** Example results
+[[./images/EarlyTest.png]]
