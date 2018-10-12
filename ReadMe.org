@@ -14,4 +14,5 @@ Run the following command, replacing "your image" with the image you want the th
 Automating the execution of this so that it updates with your desktop background is left as an exercise for the reader :).
 
 ** Example results
-[[./images/EarlyTest.png]]
+[[./images/Example1.png]]
+[[./images/Example2.png]]

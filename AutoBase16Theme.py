@@ -23,6 +23,12 @@ Base16 Style (from https://github.com/chriskempson/base16/blob/master/styling.md
     base0F - Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
 """
 
+# TODO: Add other options for templates (take as a command line argument)
+outputTemplateFilename = 'emacs-base16-theme-template.el'
+outputFilename = 'base16-my-auto-theme.el'
+
+# The index for the darkest background color. This is important to make sure contrast is high enough
+#  between the darkest background color and the darkest text
 BACKGROUND_COLOR_INDEX = 0
 
 class Base16Color:
@@ -66,7 +72,8 @@ def pickDarkestHighContrastColorUnique(base16Colors, currentBase16Color, colorPo
     minimumDarkContrast = 56
     viableColors = []
     for color in colorPool:
-        if getColorAverageBrightness(color) - getColorAverageBrightness(base16Colors[BACKGROUND_COLOR_INDEX].color) > minimumDarkContrast:
+        if (getColorAverageBrightness(color)
+            - getColorAverageBrightness(base16Colors[BACKGROUND_COLOR_INDEX].color) > minimumDarkContrast):
             viableColors.append(color)
 
     viableColors = sorted(viableColors,
@@ -81,13 +88,15 @@ def pickDarkestHighContrastColorUnique(base16Colors, currentBase16Color, colorPo
 
     return bestColor
     
-# Pick high contrast foreground (high contrast = a minimum brightness difference between this and the brightest background)
+# Pick high contrast foreground
+# High contrast = a minimum brightness difference between this and the brightest background)
 def pickHighContrastBrightColorRandom(base16Colors, currentBase16Color, colorPool):
     minimumBrightContrast = 92
     
     viableColors = []
     for color in colorPool:
-        if getColorAverageBrightness(color) - getColorAverageBrightness(base16Colors[BACKGROUND_COLOR_INDEX].color) > minimumBrightContrast:
+        if (getColorAverageBrightness(color)
+            - getColorAverageBrightness(base16Colors[BACKGROUND_COLOR_INDEX].color) > minimumBrightContrast):
             viableColors.append(color)
 
     if not viableColors:
@@ -170,8 +179,23 @@ def main():
         print('Selected {} for {}'.format(base16Colors[i].color, base16Color.name))
 
     # Output selected colors
-    # TODO: implement
-        
+    outputTemplateFile = open(outputTemplateFilename, 'r')
+    outputTemplate = ''.join(outputTemplateFile.readlines())
+    outputTemplateFile.close()
+    
+    outputText = outputTemplate.format(base16Colors[0].color, base16Colors[1].color,
+                                       base16Colors[2].color, base16Colors[3].color,
+                                       base16Colors[4].color, base16Colors[5].color,
+                                       base16Colors[6].color, base16Colors[7].color,
+                                       base16Colors[8].color, base16Colors[9].color,
+                                       base16Colors[10].color, base16Colors[11].color,
+                                       base16Colors[12].color, base16Colors[13].color,
+                                       base16Colors[14].color, base16Colors[15].color)
+    
+    outputFile = open(outputFilename, 'w')
+    outputFile.write(outputText)
+    outputFile.close()
+    print('Wrote {} using template {}', outputFilename, outputTemplateFilename)    
 
 if __name__ == '__main__':
     main()
