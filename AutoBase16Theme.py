@@ -132,29 +132,30 @@ Selection heuristics
 
 # Used for the background of dark themes. Make sure it is dark, damn it; change the color if you have to :)
 def pickDarkestColorForceDarkThreshold(base16Colors, currentBase16Color, colorPool):
-    bestColor = None
-    bestColorBrightness = 10000
+    viableColors = []
     for color in colorPool:
-        rgbColorBrightness = getColorBrightness(color)
-        if rgbColorBrightness < bestColorBrightness:
-            bestColor = color
-            bestColorBrightness = rgbColorBrightness
+            viableColors.append(color)
 
-    # Clamp brightness
-    if bestColor:
+    viableColors = sorted(viableColors,
+                          key=lambda color: getColorBrightness(color), reverse=False)
+
+    if currentMaximumBackgroundBrightnessThresholdIndex <= len(viableColors):
+        bestColor = viableColors[currentMaximumBackgroundBrightnessThresholdIndex]
+        # Clamp brightness
         hlsColor = rgb256ToHls(bestColor)
         clampedColor = (hlsColor[0],
                         min(hlsColor[1], popMaximumBackgroundBrightnessThreshold()),
                         hlsColor[2])
 
-        if debugColorsVerbose:
+        if debugColorsVerbose and clampedColor != hlsColor:
             print('Clamped {} lightness {} to {} (threshold index {})'
                   .format(bestColor, hlsColor[1], clampedColor[1],
                           currentMaximumBackgroundBrightnessThresholdIndex))
             
         return hlsToRgbStringHex(clampedColor)
 
-    return bestColor
+    # This is weird and probably an error
+    return None
 
 # Pick darkest color. If the color is already taken, pick the next unique darkest
 def pickDarkestColorUnique(base16Colors, currentBase16Color, colorPool):
@@ -266,16 +267,19 @@ def main():
     if colorsLines:
         colorPool = colorsLines
 
+    # Remove duplicate colors; these throw off the algorithm
+    colorPool = list(set(colorPool))
+
     # Process color pool
     for i, color in enumerate(colorPool):
         # Remove newlines
         colorPool[i] = color.strip('\n')
         color = colorPool[i]
 
-        # For debugging
-        print(color)
-        rgbColor = rgbColorFromStringHex(color)
-        print('RGB =', rgbColor)
+        if debugColorsVerbose:
+            print(color)
+            rgbColor = rgbColorFromStringHex(color)
+            print('RGB =', rgbColor)
 
     # Make sure we start at the darkest threshold
     resetMaximumBackgroundBrightnessThresholdIndex()

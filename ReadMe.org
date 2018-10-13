@@ -1,12 +1,17 @@
 * Auto Base16 Theme
-This script generates a [[https://github.com/chriskempson/base16][base16]] color theme intended for code syntax highlighting. 
+[[./images/Example4.jpg]]
+** What it does
+This script generates a [[https://github.com/chriskempson/base16][base16]] color theme intended for code syntax highlighting from a source image.
+
+This means you can have *beautiful, readable* themes which match your desktop background without having to do any work.
 
 I'm primarily focusing on doing this for Emacs, but it should work for any editor which supports base16.
 
 ** Setup
-This script relies on [[https://github.com/thefryscorer/schemer2][schemer2]] to choose colors from images. It then takes the output of schemer2 and selects colors which fit the base16 format. Install schemer2:
+This script relies on [[https://github.com/thefryscorer/schemer2][schemer2]] to choose colors from images. It then takes the output of schemer2 and selects colors which fit the base16 format. Make sure you have Go installed, then install schemer2:
 : go get github.com/thefryscorer/schemer2
-This script requires Python 3.
+
+Additionally, AutoBase16Theme.py requires Python 3.
 
 ** How to Use
 Run the following command, replacing "your image" with the image you want the theme's colors to be pulled from:
@@ -17,4 +22,3 @@ Automating the execution of this so that it updates with your desktop background
 [[./images/Example1.jpg]]
 [[./images/Example2.jpg]]
 [[./images/Example3.jpg]]
-[[./images/Example4.jpg]]

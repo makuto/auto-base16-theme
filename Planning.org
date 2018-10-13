@@ -1,3 +1,4 @@
+* Left off
 * To Do
 ** TODO Test selections with more images
 ** TODO Green and red tint for diff colors? Either way, establish relationship between those two (and maybe others) ensuring they are different
@@ -19,3 +20,5 @@
 ** DONE Contrast ratio between text colors shouldn't be too great (try georgia.jpg for a bad result)
 ** DONE Make it so hawaii.jpg and georgia.jpg look good (don't let background get too colorful?)
 *** blade2.jpg makes it seem like I need some background brightness clamping system
+** DONE Fix blade1.jpg backgrounds getting clamped too hard
+** DONE Fix DadSuper8Title not having some things show up (it was a duplicate color in the palette)
