@@ -16,3 +16,5 @@ Automating the execution of this so that it updates with your desktop background
 ** Example results
 [[./images/Example1.jpg]]
 [[./images/Example2.jpg]]
+[[./images/Example3.jpg]]
+[[./images/Example4.jpg]]

@@ -1,20 +1,21 @@
-* Left off
-** Make it so hawaii.jpg and georgia.jpg look good (don't let background get too colorful?)
-*** blade2.jpg makes it seem like I need some background brightness clamping system
 * To Do
 ** TODO Test selections with more images
-** TODO Emacs interface doesn't update correctly (status bars), which doesn't give an accurate picture for those colors
-** TODO Check contrast better (i.e. with some fancy algorithm)
-** TESTING Make sure base03 comments has a high enough contrast
 ** TODO Green and red tint for diff colors? Either way, establish relationship between those two (and maybe others) ensuring they are different
 *** Relationships
 **** base08, base0B, base0E should be unique between eachother (diff colors)
 **** Always have base08 variables be darker than 0A classes, 0D functions, and 0E keywords?
 **** Ensure no other foreground text values are the same as base03 comments?
-** DONE Contrast ratio between text colors shouldn't be too great (try georgia.jpg for a bad result)
 ** TODO Take template to use as a command line argument
-** TODO Support different heuristic modes (e.g. light theme)
+** TODO Support different heuristic modes (e.g. light theme, more muted, more contrasty)
+** TODO IMPORTANT Make sure things are contrasty relative to line highlight (base01?)
+** TODO Figure out how to update base16 theme colors without having to reload emacs (just unset and set in customize-themes?)
+*** TODO Emacs interface doesn't update correctly (status bars) without having to reload, which doesn't give an accurate picture for those colors
+** TODO Post on /r/unixporn, pull request to add to readme of https://github.com/chriskempson/base16
 * Done
-** DONE Figure out how to update base16 theme colors without having to reload emacs (just unset and set in customize-themes?)
 ** DONE Consider making a maximum contrast to avoid starkly bright text
 *** Test maximum brightness code
+** DONE Make sure base03 comments has a high enough contrast
+** DONE Check contrast better (i.e. with some fancy algorithm)
+** DONE Contrast ratio between text colors shouldn't be too great (try georgia.jpg for a bad result)
+** DONE Make it so hawaii.jpg and georgia.jpg look good (don't let background get too colorful?)
+*** blade2.jpg makes it seem like I need some background brightness clamping system

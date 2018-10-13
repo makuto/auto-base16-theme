@@ -39,8 +39,10 @@ outputFilename = 'base16-my-auto-theme.el'
 # TODO: Make contrast ratio mode which meets accessibility guidelines (see https://webaim.org/resources/contrastchecker/)?
 
 ## Background
-# Make sure the background is darker than this (for dark themes). In HSL Lightness (0-1)
-maximumBackgroundBrightness = 0.29
+# These values ensure the backgrounds are nice and dark, even if the color palette values are all bright
+# Each background gets progressively lighter. We'll define a different max acceptible value for each level
+# For example, the Base00 default background is darkest, so it will be clamped to 0.08 if necessary
+maximumBackgroundBrightnessThresholds = [0.08, 0.15, 0.2, 0.25, 0.3, 0.4, 0.45]
 
 ## Foreground contrasts (i.e. text color HSL lightness - background color HSL lightness)
 # These are relative values instead of ratios because you can't figure a ratio on a black background
@@ -72,6 +74,10 @@ def rgbColorFromStringHex(colorStringHex):
     # From https://stackoverflow.com/questions/29643352/converting-hex-to-rgb-value-in-python
     return tuple(int(colorStringHex.strip('#')[i:i+2], 16) for i in (0, 2 ,4))
 
+def hlsToRgbStringHex(hlsColor):
+    rgbColor = colorsys.hls_to_rgb(hlsColor[0], hlsColor[1], hlsColor[2])
+    return '#{0:02x}{1:02x}{2:02x}'.format(int(rgbColor[0] * 255), int(rgbColor[1] * 255), int(rgbColor[2] * 255))
+
 def rgb256ToHls(color):
     rgbColor = color
     if type(color) == str:
@@ -84,9 +90,9 @@ def rgb256ToHls(color):
     return colorsys.rgb_to_hls(normalizedColor[0], normalizedColor[1], normalizedColor[2])
     
 def getColorBrightness(color):
-    hsvColor = rgb256ToHls(color)
+    hlsColor = rgb256ToHls(color)
         
-    return hsvColor[1]
+    return hlsColor[1]
 
 def colorHasBeenUsed(base16Colors, color):
     for base16Color in base16Colors:
@@ -105,14 +111,53 @@ def isColorWithinContrastRange(color, backgroundColor, minimumContrast, maximumC
         
     return (contrast >= minimumContrast and contrast <= maximumContrast)
 
+# This is required so backgrounds get progressively lighter
+currentMaximumBackgroundBrightnessThresholdIndex = 0
+
+def resetMaximumBackgroundBrightnessThresholdIndex():
+    global currentMaximumBackgroundBrightnessThresholdIndex
+    currentMaximumBackgroundBrightnessThresholdIndex = 0
+    
+def popMaximumBackgroundBrightnessThreshold():
+    global currentMaximumBackgroundBrightnessThresholdIndex
+    threshold = maximumBackgroundBrightnessThresholds[currentMaximumBackgroundBrightnessThresholdIndex]
+    currentMaximumBackgroundBrightnessThresholdIndex += 1
+    return threshold
+
 """
 
 Selection heuristics
 
 """
 
-# Pick darkest, most grey color for background. If the color is already taken, pick the next unique darkest
-def pickDarkestGreyestColorUnique(base16Colors, currentBase16Color, colorPool):
+# Used for the background of dark themes. Make sure it is dark, damn it; change the color if you have to :)
+def pickDarkestColorForceDarkThreshold(base16Colors, currentBase16Color, colorPool):
+    bestColor = None
+    bestColorBrightness = 10000
+    for color in colorPool:
+        rgbColorBrightness = getColorBrightness(color)
+        if rgbColorBrightness < bestColorBrightness:
+            bestColor = color
+            bestColorBrightness = rgbColorBrightness
+
+    # Clamp brightness
+    if bestColor:
+        hlsColor = rgb256ToHls(bestColor)
+        clampedColor = (hlsColor[0],
+                        min(hlsColor[1], popMaximumBackgroundBrightnessThreshold()),
+                        hlsColor[2])
+
+        if debugColorsVerbose:
+            print('Clamped {} lightness {} to {} (threshold index {})'
+                  .format(bestColor, hlsColor[1], clampedColor[1],
+                          currentMaximumBackgroundBrightnessThresholdIndex))
+            
+        return hlsToRgbStringHex(clampedColor)
+
+    return bestColor
+
+# Pick darkest color. If the color is already taken, pick the next unique darkest
+def pickDarkestColorUnique(base16Colors, currentBase16Color, colorPool):
     bestColor = None
     bestColorBrightness = 10000
     for color in colorPool:
@@ -181,21 +226,21 @@ def main():
     base16Colors = [
         # These go from darkest to lightest via implicit unique ordering
         # base00 - Default Background
-        Base16Color('base00', pickDarkestGreyestColorUnique),
+        Base16Color('base00', pickDarkestColorForceDarkThreshold),
         # base01 - Lighter Background (Used for status bars)
-        Base16Color('base01', pickDarkestGreyestColorUnique),
+        Base16Color('base01', pickDarkestColorForceDarkThreshold),
         # base02 - Selection Background
-        Base16Color('base02', pickDarkestGreyestColorUnique),
+        Base16Color('base02', pickDarkestColorForceDarkThreshold),
         # base03 - Comments, Invisibles, Line Highlighting
         Base16Color('base03', pickDarkestHighContrastColorUnique),
         # base04 - Dark Foreground (Used for status bars)
-        Base16Color('base04', pickDarkestGreyestColorUnique),
+        Base16Color('base04', pickDarkestHighContrastColorUnique),
         # base05 - Default Foreground, Caret, Delimiters, Operators
         Base16Color('base05', pickDarkestHighContrastColorUnique),
         # base06 - Light Foreground (Not often used)
-        Base16Color('base06', pickDarkestGreyestColorUnique),
+        Base16Color('base06', pickDarkestColorForceDarkThreshold),
         # base07 - Light Background (Not often used)
-        Base16Color('base07', pickDarkestGreyestColorUnique),
+        Base16Color('base07', pickDarkestColorForceDarkThreshold),
         # base08 - Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
         Base16Color('base08', pickHighContrastBrightColorUniqueOrRandom),
         # base09 - Integers, Boolean, Constants, XML Attributes, Markup Link Url
@@ -232,6 +277,9 @@ def main():
         rgbColor = rgbColorFromStringHex(color)
         print('RGB =', rgbColor)
 
+    # Make sure we start at the darkest threshold
+    resetMaximumBackgroundBrightnessThresholdIndex()
+
     # Select a color from the color pool for each base16 color
     for i, base16Color in enumerate(base16Colors):
         color = base16Color.selectionFunction(base16Colors, base16Color, colorPool)
@@ -243,13 +291,6 @@ def main():
         base16Colors[i].color = color
         
         print('Selected {} for {}'.format(base16Colors[i].color, base16Color.name))
-
-    # Ensure backgrounds are dark enough
-    # backgroundColor = base16Colors[BACKGROUND_COLOR_INDEX]
-    
-    # for i in [0, 1, 2]:
-    #     color = base16Colors[i].color
-    #     if getColorBrightness
 
     # Output selected colors
     outputTemplateFile = open(outputTemplateFilename, 'r')
