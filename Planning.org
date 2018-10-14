@@ -6,7 +6,6 @@
 **** base08, base0B, base0E should be unique between eachother (diff colors)
 **** Always have base08 variables be darker than 0A classes, 0D functions, and 0E keywords?
 **** Ensure no other foreground text values are the same as base03 comments?
-** TODO Take template to use as a command line argument
 ** TODO Support different heuristic modes (e.g. light theme, more muted, more contrasty)
 ** TODO IMPORTANT Make sure things are contrasty relative to line highlight (base01?)
 ** TODO Figure out how to update base16 theme colors without having to reload emacs (just unset and set in customize-themes?)
@@ -22,3 +21,4 @@
 *** blade2.jpg makes it seem like I need some background brightness clamping system
 ** DONE Fix blade1.jpg backgrounds getting clamped too hard
 ** DONE Fix DadSuper8Title not having some things show up (it was a duplicate color in the palette)
+** DONE Take template to use as a command line argument

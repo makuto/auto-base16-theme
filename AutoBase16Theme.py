@@ -3,6 +3,8 @@
 # https://github.com/makuto/auto-base16-theme
 import random
 import colorsys
+import sys
+import argparse
 
 """
 This script generates a "base16" color theme intended for code syntax highlighting.
@@ -26,14 +28,26 @@ Base16 Style (from https://github.com/chriskempson/base16/blob/master/styling.md
     base0F - Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
 """
 
+argParser = argparse.ArgumentParser(
+    description='This script generates a base16 color theme intended for code syntax highlighting from a source image.')
+argParser.add_argument('--inputColorPaletteFile', type=str, dest='inputColorPaletteFile', default='colors.txt',
+                       help='The colors the script will select from will be read in from this file. The file should'
+                       ' be a list of hexadecimal color values separated by newlines')
+argParser.add_argument('template', type=str,
+                       help='The template which the hex colors will be output to. This template should'
+                       ' have 16 curly brace pair (\"{}\") where the 16 colors will be output in order. Due to'
+                       ' python formatting, you\'ll need to add another brace to any non-format braces'
+                       ' ("{{" will become a single "{")')
+argParser.add_argument('outputFile', type=str,
+                       help='Colors will be inserted into outputTemplate then written to this outputFile')
+argParser.add_argument('--debugColorsVerbose', action='store_const', const=True, default=False, dest='debugColorsVerbose',
+                       help='Print detailed information about color selection')
+
 """
 
 Configuration
 
 """
-# TODO: Add other options for templates (take as a command line argument)
-outputTemplateFilename = 'emacs-base16-theme-template.el'
-outputFilename = 'base16-my-auto-theme.el'
 
 # TODO: Make these into modes that auto-set these constraints
 # TODO: Make contrast ratio mode which meets accessibility guidelines (see https://webaim.org/resources/contrastchecker/)?
@@ -219,8 +233,8 @@ Procedure
 
 """
 
-def main():
-    colorsFile = open('colors.txt', 'r')
+def main(inputColorsFilename, outputTemplateFilename, outputFilename):
+    colorsFile = open(inputColorsFilename, 'r')
     colorsLines = colorsFile.readlines()
     colorsFile.close()
 
@@ -259,13 +273,14 @@ def main():
         # base0F - Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
         Base16Color('base0F', pickHighContrastBrightColorUniqueOrRandom)]
 
-    # For testing
-    colorPool = ['#001b8c', '#0a126b', '#010e44', '#772e51', '#ca4733', '#381f4d', '#814174',
-              '#90142e', '#720d21', '#28217d', '#6d2c88', '#3b0010', '#6e095b', '#827e7b',
-              '#645361', '#560041']
+    # The colors we are able to choose from
+    colorPool = []
 
     if colorsLines:
         colorPool = colorsLines
+    else:
+        print('Error: Could not parse colors from input colors file {}'.format(inputColorsFilename))
+        return
 
     # Remove duplicate colors; these throw off the algorithm
     colorPool = list(set(colorPool))
@@ -316,4 +331,11 @@ def main():
     print('Wrote {} using template {}'.format(outputFilename, outputTemplateFilename))
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) == 1:
+        argParser.print_help()
+        exit()
+    args = argParser.parse_args()
+
+    debugColorsVerbose = args.debugColorsVerbose
+    
+    main(args.inputColorPaletteFile, args.template, args.outputFile)

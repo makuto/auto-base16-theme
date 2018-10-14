@@ -5,18 +5,24 @@ This script generates a [[https://github.com/chriskempson/base16][base16]] color
 
 This means you can have *beautiful, readable* themes which match your desktop background without having to do any work.
 
-I'm primarily focusing on doing this for Emacs, but it should work for any editor which supports base16.
+I currently only have a template for Emacs, but it should work for any editor which supports base16. If you create a template for your format/editor of choice, please feel free to create a pull request adding that template so others can benefit from it.
 
 ** Setup
 This script relies on [[https://github.com/thefryscorer/schemer2][schemer2]] to choose colors from images. It then takes the output of schemer2 and selects colors which fit the base16 format. Make sure you have Go installed, then install schemer2:
 : go get github.com/thefryscorer/schemer2
-
-Additionally, AutoBase16Theme.py requires Python 3.
+AutoBase16Theme.py requires Python 3.
 
 ** How to Use
-Run the following command, replacing "your image" with the image you want the theme's colors to be pulled from:
-: schemer2 -format img::colors -in [your image] -out colors.txt && python3 AutoBase16Theme.py
-Automating the execution of this so that it updates with your desktop background is left as an exercise for the reader :).
+Run the following command, replacing `your image` with the image you want the theme's colors to be pulled from:
+: schemer2 -format img::colors -in [your image] -out colors.txt && python3 AutoBase16Theme.py [your template] [your output file]
+`schemer2` generates the color palette from the source image and outputs a list of color values to `colors.txt`. We then run AutoBase16Theme.py (which loads `colors.txt` by default). AutoBase16Theme.py selects from these color values (and modifies them, if necessary) such that a good theme is created. It loads `your template` and writes the final theme to `your output file`.
+For example, I have an image 'wallpaper.jpg' and I want an [[https://github.com/belak/base16-emacs][Emacs base16]] theme to be generated:
+: schemer2 -format img::colors -in wallpaper.jpg -out colors.txt && python3 AutoBase16Theme.py emacs-base16-theme-template.el base16-my-wallpaper-theme.el
+I can then copy `base16-my-wallpaper-theme.el` into my Emacs base16 directory and evaluate it, then select it as a theme.
+*** Additional Arguments
+Note that running
+: python3 AutoBase16Theme.py
+will output help with argument descriptions.
 
 ** Example results
 [[./images/Example1.jpg]]
