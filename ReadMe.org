@@ -13,12 +13,17 @@ This script relies on [[https://github.com/thefryscorer/schemer2][schemer2]] to 
 AutoBase16Theme.py requires Python 3.
 
 ** How to Use
-Run the following command, replacing `your image` with the image you want the theme's colors to be pulled from:
+Run the following command, replacing ~your image~ with the image you want the theme's colors to be pulled from:
 : schemer2 -format img::colors -in [your image] -out colors.txt && python3 AutoBase16Theme.py [your template] [your output file]
-`schemer2` generates the color palette from the source image and outputs a list of color values to `colors.txt`. We then run AutoBase16Theme.py (which loads `colors.txt` by default). AutoBase16Theme.py selects from these color values (and modifies them, if necessary) such that a good theme is created. It loads `your template` and writes the final theme to `your output file`.
-For example, I have an image 'wallpaper.jpg' and I want an [[https://github.com/belak/base16-emacs][Emacs base16]] theme to be generated:
+
+*** Explanation
+- ~schemer2~ generates the color palette from the source image and outputs a list of color values to ~colors.txt~. 
+- We then run AutoBase16Theme.py (which loads ~colors.txt~ by default). AutoBase16Theme.py selects from these color values (and modifies them, if necessary) such that a good theme is created. It loads ~your template~ and writes the final theme to ~your output file~.
+
+For example, I have an image "wallpaper.jpg" and I want an [[https://github.com/belak/base16-emacs][Emacs base16]] theme to be generated:
 : schemer2 -format img::colors -in wallpaper.jpg -out colors.txt && python3 AutoBase16Theme.py emacs-base16-theme-template.el base16-my-wallpaper-theme.el
-I can then copy `base16-my-wallpaper-theme.el` into my Emacs base16 directory and evaluate it, then select it as a theme.
+I can then copy ~base16-my-wallpaper-theme.el~ into my Emacs base16 directory and evaluate it, then select it as a theme.
+
 *** Additional Arguments
 Note that running
 : python3 AutoBase16Theme.py
