@@ -29,6 +29,22 @@ Note that running
 : python3 AutoBase16Theme.py
 will output help with argument descriptions.
 
+*** Emacs convenience function
+Here's an Emacs Lisp setup for making it easier to create new themes. You'll need to customize it with your own paths.
+#+BEGIN_SRC lisp
+(setq macoy-auto-theme-schemer2-bin "c:/Users/mmadson/go/bin/schemer2.exe")
+(setq macoy-auto-theme-script-dir "c:/Users/mmadson/MacoyPrograms/auto-base16-theme")
+(setq macoy-auto-theme-output-file "c:/Users/mmadson/AppData/Roaming/.emacs.d/elpa/base16-theme-20190413.1637/base16-my-auto-theme.el")
+
+(defun macoy-generate-auto-theme ()
+  "Create a base16 auto-theme using AutoBase16Theme.py based on the image selected."
+  (interactive)
+
+  (let ((default-directory macoy-auto-theme-script-dir))
+    (compile
+     (format "%s -format img::colors -in \"%s\" -out colors.txt && C:/Cryptic/tools/Python_34/python.exe AutoBase16Theme.py emacs-base16-theme-template.el %s"
+             macoy-auto-theme-schemer2-bin (read-file-name "Image: ") macoy-auto-theme-output-file))))
+#+END_SRC
 ** Example results
 [[./images/Example1.jpg]]
 [[./images/Example2.jpg]]
