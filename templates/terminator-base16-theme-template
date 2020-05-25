@@ -1,0 +1,16 @@
+[global_config]
+  borderless = True
+[keybindings]
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+[plugins]
+[profiles]
+  [[default]]
+    cursor_color = "#aaaaaa"
+    palette = "#{}:#{}:#{}:#{}:#{}:#{}:#{}:#{}:#{}:#{}:#{}:#{}:#{}:#{}:#{}:#{}"
