@@ -316,14 +316,14 @@ def main(inputColorsFilename, outputTemplateFilename, outputFilename):
     outputTemplate = ''.join(outputTemplateFile.readlines())
     outputTemplateFile.close()
     
-    outputText = outputTemplate.format(base16Colors[0].color, base16Colors[1].color,
-                                       base16Colors[2].color, base16Colors[3].color,
-                                       base16Colors[4].color, base16Colors[5].color,
-                                       base16Colors[6].color, base16Colors[7].color,
-                                       base16Colors[8].color, base16Colors[9].color,
-                                       base16Colors[10].color, base16Colors[11].color,
-                                       base16Colors[12].color, base16Colors[13].color,
-                                       base16Colors[14].color, base16Colors[15].color)
+    outputText = outputTemplate.format((base16Colors[0].color)[1:],  (base16Colors[1].color)[1:],
+                                       (base16Colors[2].color)[1:],  (base16Colors[3].color)[1:],
+                                       (base16Colors[4].color)[1:],  (base16Colors[5].color)[1:],
+                                       (base16Colors[6].color)[1:],  (base16Colors[7].color)[1:],
+                                       (base16Colors[8].color)[1:],  (base16Colors[9].color)[1:],
+                                       (base16Colors[10].color)[1:], (base16Colors[11].color)[1:],
+                                       (base16Colors[12].color)[1:], (base16Colors[13].color)[1:],
+                                       (base16Colors[14].color)[1:], (base16Colors[15].color)[1:])
     
     outputFile = open(outputFilename, 'w')
     outputFile.write(outputText)

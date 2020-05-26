@@ -5,22 +5,22 @@
 (require 'base16-theme)
 
 (defvar base16-my-auto-colors
-  '(:base00 "#000000"
-    :base01 "#17181b"
-    :base02 "#302429"
-    :base03 "#c0c3b9"
-    :base04 "#423439"
-    :base05 "#4b4b4b"
-    :base06 "#755253"
-    :base07 "#656562"
-    :base08 "#a2a7a1"
-    :base09 "#8d646d"
-    :base0A "#a2a7a1"
-    :base0B "#c0c3b9"
-    :base0C "#a2a7a1"
-    :base0D "#755253"
-    :base0E "#755253"
-    :base0F "#a2a7a1")
+  '(:base00 "#{}"
+    :base01 "#{}"
+    :base02 "#{}"
+    :base03 "#{}"
+    :base04 "#{}"
+    :base05 "#{}"
+    :base06 "#{}"
+    :base07 "#{}"
+    :base08 "#{}"
+    :base09 "#{}"
+    :base0A "#{}"
+    :base0B "#{}"
+    :base0C "#{}"
+    :base0D "#{}"
+    :base0E "#{}"
+    :base0F "#{}")
   "All colors for Base16 Macoy are defined here.")
 
 ;; Define the theme
